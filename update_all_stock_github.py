@@ -265,6 +265,11 @@ def update_inventory_bulk(updates):
         return results
     return None
 
+def extract_numeric_id(gid):
+    if gid and 'gid://' in gid:
+        return gid.split('/')[-1]
+    return gid
+
 def process_sku_batch(skus, stock_data_dict):
     try:
         variants = get_variants_bulk(skus)
@@ -304,9 +309,9 @@ def process_sku_batch(skus, stock_data_dict):
                     'shopify_committed': None,
                     'new_available': None,
                     'product_title': variant['product']['title'],
-                    'variant_id': variant['id'],
+                    'variant_id': extract_numeric_id(variant['id']),
                     'product_handle': variant['product']['handle'],
-                    'product_id': variant['product']['id']
+                    'product_id': extract_numeric_id(variant['product']['id'])
                 })
                 continue
             if sku not in stock_data_dict:
@@ -332,9 +337,9 @@ def process_sku_batch(skus, stock_data_dict):
                     'shopify_committed': current_committed,
                     'new_available': new_available,
                     'product_title': variant['product']['title'],
-                    'variant_id': variant['id'],
+                    'variant_id': extract_numeric_id(variant['id']),
                     'product_handle': variant['product']['handle'],
-                    'product_id': variant['product']['id']
+                    'product_id': extract_numeric_id(variant['product']['id'])
                 })
                 continue
             if current_available == new_available:
@@ -348,9 +353,9 @@ def process_sku_batch(skus, stock_data_dict):
                     'shopify_committed': current_committed,
                     'new_available': new_available,
                     'product_title': variant['product']['title'],
-                    'variant_id': variant['id'],
+                    'variant_id': extract_numeric_id(variant['id']),
                     'product_handle': variant['product']['handle'],
-                    'product_id': variant['product']['id']
+                    'product_id': extract_numeric_id(variant['product']['id'])
                 })
                 continue
             updates.append({
@@ -358,13 +363,13 @@ def process_sku_batch(skus, stock_data_dict):
                 'inventory_item_id': variant['inventoryItem']['id'],
                 'available': new_available,
                 'product_title': variant['product']['title'],
-                'variant_id': variant['id'],
+                'variant_id': extract_numeric_id(variant['id']),
                 'current_available': current_available,
                 'current_committed': current_committed,
                 'csv_stock': stock_data['current_stock'],
                 'csv_available': stock_data['available_for_sale'],
                 'product_handle': variant['product']['handle'],
-                'product_id': variant['product']['id']
+                'product_id': extract_numeric_id(variant['product']['id'])
             })
         for sku in skus:
             if sku not in found_skus:
