@@ -61,7 +61,11 @@ def setup_driver():
         "safebrowsing.enabled": True
     }
     chrome_options.add_experimental_option("prefs", prefs)
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    # Get the correct path to the chromedriver binary
+    driver_path = ChromeDriverManager().install()
+    if driver_path.endswith("THIRD_PARTY_NOTICES.chromedriver"):
+        driver_path = driver_path.replace("THIRD_PARTY_NOTICES.chromedriver", "chromedriver")
+    driver = webdriver.Chrome(service=Service(driver_path), options=chrome_options)
     return driver
 
 def rename_latest_csv(download_dir):
