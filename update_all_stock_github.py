@@ -26,7 +26,7 @@ SHOPIFY_STORE_URL = os.getenv('SHOPIFY_STORE_URL')
 TARGET_LOCATION_ID = os.getenv('TARGET_LOCATION_ID', "23455432785")
 CSV_FILENAME = 'latest_stock.csv'
 DOWNLOAD_DIR = '/tmp'
-BATCH_SIZE = 35
+BATCH_SIZE = 250  # Shopify allows up to 250 for productVariants queries
 
 # FLAM credentials from environment
 FLAM_USERNAME = os.getenv('FLAM_USERNAME')
@@ -482,9 +482,11 @@ def main():
             logger.info(f"Shopify Available: {row['shopify_available']}")
             logger.info(f"New Available: {row['new_available']}")
             if row.get('multiple_variants'):
-                logger.info(f"WARNING: This SKU appears in {row['variant_count']} products:")
-                for product in row['variant_products']:
-                    logger.info(f"  - {product}")
+                logger.info(f"WARNING: This SKU appears in {row.get('variant_count', 0)} products:")
+                variant_products = row.get('variant_products')
+                if isinstance(variant_products, list):
+                    for product in variant_products:
+                        logger.info(f"  - {product}")
             logger.info("-" * 100)
     skipped = report_df[report_df['status'] == 'skipped']
     if not skipped.empty:
@@ -498,9 +500,11 @@ def main():
             logger.info(f"CSV Available: {row['csv_available']}")
             logger.info(f"Shopify Available: {row['shopify_available']}")
             if row.get('multiple_variants'):
-                logger.info(f"WARNING: This SKU appears in {row['variant_count']} products:")
-                for product in row['variant_products']:
-                    logger.info(f"  - {product}")
+                logger.info(f"WARNING: This SKU appears in {row.get('variant_count', 0)} products:")
+                variant_products = row.get('variant_products')
+                if isinstance(variant_products, list):
+                    for product in variant_products:
+                        logger.info(f"  - {product}")
             logger.info("-" * 100)
     errors = report_df[report_df['status'] == 'error']
     if not errors.empty:
@@ -513,9 +517,11 @@ def main():
             logger.info(f"CSV Stock: {row['csv_stock']}")
             logger.info(f"CSV Available: {row['csv_available']}")
             if row.get('multiple_variants'):
-                logger.info(f"WARNING: This SKU appears in {row['variant_count']} products:")
-                for product in row['variant_products']:
-                    logger.info(f"  - {product}")
+                logger.info(f"WARNING: This SKU appears in {row.get('variant_count', 0)} products:")
+                variant_products = row.get('variant_products')
+                if isinstance(variant_products, list):
+                    for product in variant_products:
+                        logger.info(f"  - {product}")
             logger.info("-" * 100)
     # Print summary of multiple variants
     if 'multiple_variants' in report_df.columns:
@@ -528,9 +534,11 @@ def main():
         for _, row in multiple_variants.iterrows():
             logger.info(f"SKU: {row['sku']}")
             logger.info(f"Status: {row['status']}")
-            logger.info(f"Appears in {row['variant_count']} products:")
-            for product in row['variant_products']:
-                logger.info(f"  - {product}")
+            logger.info(f"Appears in {row.get('variant_count', 0)} products:")
+            variant_products = row.get('variant_products')
+            if isinstance(variant_products, list):
+                for product in variant_products:
+                    logger.info(f"  - {product}")
             logger.info("-" * 100)
 
 if __name__ == "__main__":
