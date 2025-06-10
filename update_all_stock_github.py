@@ -512,7 +512,11 @@ def main():
                 for product in row['variant_products']:
                     logger.info(f"  - {product}")
             logger.info("-" * 100)
-    multiple_variants = report_df[report_df.get('multiple_variants', False)]
+    # Print summary of multiple variants
+    if 'multiple_variants' in report_df.columns:
+        multiple_variants = report_df[report_df['multiple_variants'] == True]
+    else:
+        multiple_variants = pd.DataFrame()
     if not multiple_variants.empty:
         logger.info("\nSKUs with Multiple Variants:")
         logger.info("-" * 100)
