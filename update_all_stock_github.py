@@ -298,22 +298,6 @@ def process_sku_batch(skus, stock_data_dict):
             if sku not in sku_variants:
                 sku_variants[sku] = []
             sku_variants[sku].append(variant)
-            if variant['product']['archived']:
-                results.append({
-                    'sku': sku,
-                    'status': 'skipped',
-                    'message': 'Product is archived in Shopify',
-                    'csv_stock': stock_data_dict[sku]['current_stock'],
-                    'csv_available': stock_data_dict[sku]['available_for_sale'],
-                    'shopify_available': None,
-                    'shopify_committed': None,
-                    'new_available': None,
-                    'product_title': variant['product']['title'],
-                    'variant_id': extract_numeric_id(variant['id']),
-                    'product_handle': variant['product']['handle'],
-                    'product_id': extract_numeric_id(variant['product']['id'])
-                })
-                continue
             if sku not in stock_data_dict:
                 continue
             stock_data = stock_data_dict[sku]
