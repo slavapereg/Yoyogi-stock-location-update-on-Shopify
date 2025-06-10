@@ -1,0 +1,31 @@
+name: Test Shopify SKU Lookup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-shopify-lookup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Shopify SKU lookup test
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          TARGET_LOCATION_ID: ${{ secrets.TARGET_LOCATION_ID }}
+          FLAM_USERNAME: ${{ secrets.FLAM_USERNAME }}
+          FLAM_PASSWORD: ${{ secrets.FLAM_PASSWORD }}
+          FLAM_URL: ${{ secrets.FLAM_URL }}
+        run: python test_shopify_lookup.py 
