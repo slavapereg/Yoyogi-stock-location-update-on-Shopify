@@ -1,0 +1,5 @@
+requests==2.31.0
+pandas==2.1.4
+selenium==4.16.0
+webdriver-manager==4.0.1
+tenacity==8.2.3
