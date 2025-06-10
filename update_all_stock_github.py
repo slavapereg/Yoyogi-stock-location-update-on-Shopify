@@ -171,7 +171,7 @@ def get_variants_bulk(skus):
             product {{
               id
               title
-              archived
+              handle
             }}
             inventoryItem {{
               id
@@ -279,7 +279,9 @@ def process_sku_batch(skus, stock_data_dict):
                 'shopify_committed': None,
                 'new_available': None,
                 'product_title': None,
-                'variant_id': None
+                'variant_id': None,
+                'product_handle': None,
+                'product_id': None
             } for sku in skus]
         updates = []
         results = []
@@ -302,7 +304,9 @@ def process_sku_batch(skus, stock_data_dict):
                     'shopify_committed': None,
                     'new_available': None,
                     'product_title': variant['product']['title'],
-                    'variant_id': variant['id']
+                    'variant_id': variant['id'],
+                    'product_handle': variant['product']['handle'],
+                    'product_id': variant['product']['id']
                 })
                 continue
             if sku not in stock_data_dict:
@@ -328,7 +332,9 @@ def process_sku_batch(skus, stock_data_dict):
                     'shopify_committed': current_committed,
                     'new_available': new_available,
                     'product_title': variant['product']['title'],
-                    'variant_id': variant['id']
+                    'variant_id': variant['id'],
+                    'product_handle': variant['product']['handle'],
+                    'product_id': variant['product']['id']
                 })
                 continue
             if current_available == new_available:
@@ -342,7 +348,9 @@ def process_sku_batch(skus, stock_data_dict):
                     'shopify_committed': current_committed,
                     'new_available': new_available,
                     'product_title': variant['product']['title'],
-                    'variant_id': variant['id']
+                    'variant_id': variant['id'],
+                    'product_handle': variant['product']['handle'],
+                    'product_id': variant['product']['id']
                 })
                 continue
             updates.append({
@@ -354,7 +362,9 @@ def process_sku_batch(skus, stock_data_dict):
                 'current_available': current_available,
                 'current_committed': current_committed,
                 'csv_stock': stock_data['current_stock'],
-                'csv_available': stock_data['available_for_sale']
+                'csv_available': stock_data['available_for_sale'],
+                'product_handle': variant['product']['handle'],
+                'product_id': variant['product']['id']
             })
         for sku in skus:
             if sku not in found_skus:
@@ -368,7 +378,9 @@ def process_sku_batch(skus, stock_data_dict):
                     'shopify_committed': None,
                     'new_available': None,
                     'product_title': None,
-                    'variant_id': None
+                    'variant_id': None,
+                    'product_handle': None,
+                    'product_id': None
                 })
         if updates:
             update_results = update_inventory_bulk(updates)
@@ -381,7 +393,9 @@ def process_sku_batch(skus, stock_data_dict):
                             'csv_available': update['csv_available'],
                             'shopify_available': update['current_available'],
                             'shopify_committed': update['current_committed'],
-                            'new_available': update['available']
+                            'new_available': update['available'],
+                            'product_handle': update['product_handle'],
+                            'product_id': update['product_id']
                         })
                 results.extend(update_results)
         for sku, variants in sku_variants.items():
@@ -405,7 +419,9 @@ def process_sku_batch(skus, stock_data_dict):
             'shopify_committed': None,
             'new_available': None,
             'product_title': None,
-            'variant_id': None
+            'variant_id': None,
+            'product_handle': None,
+            'product_id': None
         } for sku in skus]
 
 def main():
